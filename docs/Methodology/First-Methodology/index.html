@@ -1,0 +1,83 @@
+<h2 class="text-3xl font-bold mb-4">🕵️ Bug Hunting Methodologies</h2>
+<p class="text-gray-300 mb-6">
+A curated collection of <strong>public bug bounty hunting workflows</strong> from write-ups, GitHub repos, and hacker communities.  
+Whether you’re a <span class="text-green-400 font-semibold">beginner</span> or a <span class="text-blue-400 font-semibold">seasoned hunter</span>, this guide helps structure your recon and exploitation phases with practical steps.
+</p>
+
+<ul class="list-disc ml-6 text-gray-400 space-y-2 mb-6">
+  <li>🎯 <strong>Goal:</strong> Build systematic bug hunting pipelines</li>
+  <li>⚡ <strong>Method:</strong> Step-by-step workflows from discovery to exploitation</li>
+  <li>🔐 <strong>Use case:</strong> Bug bounty, red teaming, OSINT research</li>
+</ul>
+
+<hr class="border-gray-700 my-6" />
+
+<h3 class="text-xl font-bold text-gray-100 mb-2">🔍 Methodology 1: Recon → Exploitation</h3>
+<p class="text-gray-300 mb-4">
+From subdomain enumeration to sensitive file hunting, this is the <strong>classic recon workflow</strong>.
+</p>
+<pre class="bg-gray-900 text-blue-400 text-sm p-4 rounded overflow-x-auto whitespace-pre-wrap">
+subfinder -d target.com -all > subs.txt
+cat subs.txt | httpx -ports 80,443 -o live.txt
+katana -u live.txt -d 5 -o urls.txt
+grep -E "\.js|\.config|\.json" urls.txt
+nuclei -list live.txt -t exposures/
+</pre>
+
+<hr class="border-gray-700 my-6" />
+
+<h3 class="text-xl font-bold text-gray-100 mb-2">🌐 Methodology 2: Wide Recon</h3>
+<p class="text-gray-300 mb-4">
+Covers <strong>ASN lookups, DNS permutations, and intel feeds</strong> to find hidden assets.
+</p>
+<ul class="list-disc ml-6 text-gray-400 space-y-2 mb-6">
+  <li><strong>Subdomains:</strong> Subfinder, Amass, crt.sh</li>
+  <li><strong>Passive URLs:</strong> Gau, Waybackurls</li>
+  <li><strong>DNS Tricks:</strong> PureDNS + Gotator</li>
+  <li><strong>Extra:</strong> Reverse DNS, favicon hashing</li>
+</ul>
+
+<hr class="border-gray-700 my-6" />
+
+<h3 class="text-xl font-bold text-gray-100 mb-2">📜 Methodology 3: JavaScript Recon</h3>
+<p class="text-gray-300 mb-4">
+Focused on <span class="text-yellow-400">JS file analysis</span> for secrets, endpoints, and hidden APIs.
+</p>
+<pre class="bg-gray-900 text-green-400 text-sm p-4 rounded overflow-x-auto whitespace-pre-wrap">
+gau paypal.com | grep '\.js' > js.txt
+cat js.txt | xargs -n1 python3 linkfinder.py -o cli
+cat js.txt | xargs -I@ python3 SecretFinder.py -i @
+</pre>
+<p class="text-gray-400 italic mb-4">💡 Tip: Many API keys leak inside minified JS files—always check them!</p>
+
+<hr class="border-gray-700 my-6" />
+
+<h3 class="text-xl font-bold text-gray-100 mb-2">🛠️ Methodology 4: Recon + Vuln Scanning</h3>
+<p class="text-gray-300 mb-4">
+Chains recon tools with <span class="text-red-400">vulnerability scanners</span> like Nuclei, sqlmap, and Dalfox.
+</p>
+<ul class="list-disc ml-6 text-gray-400 space-y-2 mb-6">
+  <li>⚡ <strong>Takeover detection:</strong> Subzy, Nuclei templates</li>
+  <li>🧩 <strong>Dorking:</strong> Google, GitHub, Shodan</li>
+  <li>💉 <strong>Exploitation:</strong> XSS, SQLi, LFI testing</li>
+</ul>
+
+<hr class="border-gray-700 my-6" />
+
+<h3 class="text-xl font-bold text-gray-100 mb-2">🧠 Summary for Beginners</h3>
+<p class="text-gray-300 mb-4">
+Bug hunting isn’t about random scans—it’s about <strong>structured workflows</strong>.  
+Start simple (subdomains + httpx + nuclei) and gradually expand to wide recon, JS hunting, and automation.
+</p>
+<p class="text-gray-400 italic mb-6">
+🔑 Remember: Every tool is just a <em>step in the chain</em>—what matters is the <strong>methodology</strong>.
+</p>
+
+<h3 class="text-xl font-bold text-gray-100 mb-2">🔗 Resources</h3>
+<ul class="list-disc ml-6 text-gray-400 space-y-2 mb-6">
+  <li><a href="https://github.com/coffinxp/Bug-Hunting-methodologies" class="text-blue-400 underline" target="_blank">Bug Hunting Methodologies Repo</a></li>
+  <li><a href="https://github.com/RemmyNine/BBH-Recon" class="text-blue-400 underline" target="_blank">BBH-Recon</a></li>
+  <li><a href="https://github.com/projectdiscovery/nuclei" class="text-blue-400 underline" target="_blank">Nuclei</a></li>
+  <li><a href="https://github.com/lc/gau" class="text-blue-400 underline" target="_blank">gau</a></li>
+  <li><a href="https://github.com/tomnomnom/waybackurls" class="text-blue-400 underline" target="_blank">waybackurls</a></li>
+</ul>
